@@ -19,7 +19,7 @@ def input_stationary_total_energy(batch_size=1):
     # Count total number of weight params in network
     weight_param_count = 0
     for i in range(5):
-        weight_param_count += conv_layers[i]['filter_width']*conv_layers[i]['filter_height']*conv_layers[i]['num_channel']*conv_layers[i]['num_filter']
+        weight_param_count += conv_layer_params[i]['filter_width']*conv_layer_params[i]['filter_height']*conv_layer_params[i]['num_channel']*conv_layer_params[i]['num_filter']
     
     # Energy to move weight params from DRAM to SRAM
     weight_dram_energy = DRAM_ACC_ENERGY_PER_BIT * (weight_param_count * BITS_PER_WEIGHT)
@@ -31,7 +31,7 @@ def input_stationary_total_energy(batch_size=1):
     # Calculate energy for 5 convolutional layers
     conv_layer_energies = [0] * 5
     for i in range(5):
-        conv_layer_energies[i] = calc_input_stationary_conv_energy(**conv_layers[i], batch_size=batch_size)
+        conv_layer_energies[i] = calc_input_stationary_conv_energy(**conv_layer_params[i], batch_size=batch_size)
 
     total_energy = sum(conv_layer_energies) + dram_energy
 
@@ -86,7 +86,7 @@ def output_stationary_total_energy(batch_size=1):
     # Count total number of weight params in network
     weight_param_count = 0
     for i in range(5):
-        weight_param_count += conv_layers[i]['filter_width']*conv_layers[i]['filter_height']*conv_layers[i]['num_channel']*conv_layers[i]['num_filter']
+        weight_param_count += conv_layer_params[i]['filter_width']*conv_layer_params[i]['filter_height']*conv_layer_params[i]['num_channel']*conv_layer_params[i]['num_filter']
     
     # Energy to move weight params from DRAM to SRAM
     weight_dram_energy = DRAM_ACC_ENERGY_PER_BIT * (weight_param_count * BITS_PER_WEIGHT)
@@ -98,7 +98,7 @@ def output_stationary_total_energy(batch_size=1):
     # Calculate energy for 5 convolutional layers
     conv_layer_energies = [0] * 5
     for i in range(5):
-        conv_layer_energies[i] = calc_output_stationary_conv_energy(**conv_layers[i], batch_size=batch_size)
+        conv_layer_energies[i] = calc_output_stationary_conv_energy(**conv_layer_params[i], batch_size=batch_size)
 
     total_energy = sum(conv_layer_energies) + dram_energy
 

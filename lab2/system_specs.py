@@ -8,7 +8,7 @@
 # 5. Conv [256, 128, 3,3]
 # 6. Conv [512, 256, 3, 3]
 
-conv_layers = [
+conv_layer_params = [
     {'input_width':32, 'input_height':32,
      'num_filter':32, 'num_channel':3, 'filter_width':3, 'filter_height':3},
     {'input_width':32, 'input_height':32,
