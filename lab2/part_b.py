@@ -43,13 +43,6 @@ def calc_weight_stationary_conv_latency(
 
 
 def calc_weight_stationary_matrix_mult_latency(weight_rows=32, input_rows=27, input_cols=1024, dpu_size=DPU_SIZE):
-    # Timing diagram if activation SRAM is dual ported
-    # (4 input updates per weight update)
-    # Weight   ------                 ------                    
-    # Input    ---     ---  ---  ---  ---     ---  ---  ---     
-    # Compute        --   --   --   --      --   --   --   --   
-    # Output           ---  ---  ---  ---     ---  ---  ---  ---
-
     # Timing diagram if activation SRAM is single ported
     # (4 input updates per weight update)
     # Weight   ------                             ------                             

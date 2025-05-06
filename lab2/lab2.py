@@ -11,10 +11,7 @@ def main():
     part_c.test()
 
     # Part d
-    batch_size = 0
-    latency_seconds = 0
-    fps = 0
-    print(f"batch size = {batch_size}, pipelined latency = {latency_seconds} s, pipelined average FPS = {fps}")
+    part_d.test()
 
 
 if __name__ == '__main__':
