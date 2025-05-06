@@ -8,9 +8,7 @@ def main():
     part_b.test()
 
     # Part c
-    dpu_size = 0
-    fps = 0
-    print(f"dot product unit size = {dpu_size}, average FPS = {fps}")
+    part_c.test()
 
     # Part d
     batch_size = 0
