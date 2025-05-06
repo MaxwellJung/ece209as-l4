@@ -7,12 +7,29 @@ def main():
         input_width=16, input_height=16,
         num_filter=512, num_channel=256, filter_width=3, filter_height=3,
         batch_size=1)
+    
+    test()
 
-    print(f'{input_stationary_total_energy(batch_size=1)=}')
-    print(f'{input_stationary_total_energy(batch_size=256)=}')
+def test():
+    df_name = 'IS'
+    batch_size = 1
+    total_energy = input_stationary_total_energy(batch_size=batch_size)
+    print(f"dataflow = {df_name}, batch size = {batch_size}, energy = {total_energy} J")
 
-    print(f'{output_stationary_total_energy(batch_size=1)=}')
-    print(f'{output_stationary_total_energy(batch_size=256)=}')
+    df_name = 'IS'
+    batch_size = 256
+    total_energy = input_stationary_total_energy(batch_size=batch_size)
+    print(f"dataflow = {df_name}, batch size = {batch_size}, energy = {total_energy} J")
+
+    df_name = 'OS'
+    batch_size = 1
+    total_energy = output_stationary_total_energy(batch_size=batch_size)
+    print(f"dataflow = {df_name}, batch size = {batch_size}, energy = {total_energy} J")
+
+    df_name = 'OS'
+    batch_size = 256
+    total_energy = output_stationary_total_energy(batch_size=batch_size)
+    print(f"dataflow = {df_name}, batch size = {batch_size}, energy = {total_energy} J")
 
 
 def input_stationary_total_energy(batch_size=1):
