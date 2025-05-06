@@ -46,18 +46,18 @@ def calc_weight_stationary_conv_latency(
 def calc_weight_stationary_matrix_mult_latency(weight_rows=32, input_rows=27, input_cols=1024, dpu_size=DPU_SIZE):
     # Timing diagram if activation SRAM is single ported and compute module is pipelined
     # (4 input updates per weight update)
-    # Weight   ------|      |      |      |      |------|      |      |      |      |
-    # Input    ---   |---   |---   |---   |      |---   |---   |---   |---   |      |
-    # Compute        |--    |--    |--    |--    |      |--    |--    |--    |--    |
-    # Output         |   ---|   ---|   ---|   ---|      |   ---|   ---|   ---|   ---|
+    # Weight   ------|      |      |      |------|      |      |      |
+    # Input    ---   |---   |---   |---   |---   |---   |---   |---   |
+    # Compute        |--    |--    |--    |--    |--    |--    |--    |--    |
+    # Output         |   ---|   ---|   ---|   ---|   ---|   ---|   ---|   ---|
 
     weight_buf_update_count = math.ceil(weight_rows/NUM_DPU) * math.ceil(input_rows/dpu_size)
     input_buf_update_count_per_weight_update = input_cols
 
     pipeline_latency = max(WEIGHT_SRAM_LOAD_LATENCY, ACTIVATION_SRAM_LOAD_LATENCY, COMPUTE_LATENCY, ACTIVATION_SRAM_WRITE_LATENCY)
-    latency_per_weight_update = (input_buf_update_count_per_weight_update+1)*pipeline_latency
+    latency_per_weight_update = input_buf_update_count_per_weight_update * pipeline_latency
 
-    total_latency = latency_per_weight_update * weight_buf_update_count
+    total_latency = latency_per_weight_update * weight_buf_update_count + pipeline_latency
 
     return total_latency
 
