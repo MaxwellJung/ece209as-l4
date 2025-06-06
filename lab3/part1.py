@@ -2,8 +2,7 @@ from system_specs import *
 
 def main():
     tp_1_latency, tp_1_traffic = part1_q1_tensor_parallelism(NETWORK_LAYERS_1)
-    pp_1_latency = 0
-    pp_1_traffic = 0
+    pp_1_latency, pp_1_traffic = part1_q1_pipeline_parallelism(NETWORK_LAYERS_1)
 
     tp_32_latency = 0
     tp_32_traffic = 0
@@ -32,7 +31,7 @@ def part1_q1_tensor_parallelism(network_layers):
     layer_traffic_list = []
 
     for layer in network_layers:
-        latency, traffic = calc_ts_layer(**layer, nodes=4)
+        latency, traffic = calc_tp_layer(**layer, nodes=4)
 
         layer_latency_list.append(latency)
         layer_traffic_list.append(traffic)
@@ -45,7 +44,25 @@ def part1_q1_tensor_parallelism(network_layers):
     return latency_ms, traffic_kbits
 
 
-def calc_ts_layer(
+def part1_q1_pipeline_parallelism(network_layers):
+    layer_latency_list = []
+    layer_traffic_list = []
+
+    for layer in network_layers:
+        latency, traffic = calc_pp_layer(**layer, nodes=4)
+
+        layer_latency_list.append(latency)
+        layer_traffic_list.append(traffic)
+
+    total_latency_seconds = sum(layer_latency_list)
+    total_traffic_bits = sum(layer_traffic_list)
+    latency_ms = total_latency_seconds * 1e3
+    traffic_kbits = total_traffic_bits / 1e3
+
+    return latency_ms, traffic_kbits
+
+
+def calc_tp_layer(
         num_filter=128, 
         num_channel=3, 
         filter_width=3, 
@@ -90,8 +107,36 @@ def calc_pp_layer(
         filter_height=3, 
         input_width=32, 
         input_height=32, 
+        final_layer=False,
         nodes=4):
-    return 0
+
+    filters_per_node = num_filter
+    output_width = input_width - filter_width + 1
+    output_height = input_height - filter_height + 1
+    output_count_per_node = output_width * output_height * filters_per_node
+
+    mac_per_output = filter_width * filter_height * num_channel
+    mac_per_node = mac_per_output * output_count_per_node
+    ops_per_node = mac_per_node * OPS_PER_MAC
+    compute_latency_per_node = ops_per_node / OPS_PER_SEC
+
+    output_bits_per_node = output_count_per_node * BITS_PER_WEIGHT
+    if final_layer:
+        output_broadcast_latency_per_node = 0
+    else:
+        output_broadcast_latency_per_node = output_bits_per_node / BITS_PER_SEC
+    latency = compute_latency_per_node + output_broadcast_latency_per_node
+
+    if final_layer:
+        # output node doesn't need to broadcast
+        output_broadcast_bits = 0
+        traffic = output_broadcast_bits
+    else:
+        # each node broadcasts its output to next node
+        output_broadcast_bits = output_bits_per_node * 1
+        traffic = output_broadcast_bits
+
+    return latency, traffic
 
 
 if __name__ == '__main__':
