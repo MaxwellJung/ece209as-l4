@@ -54,8 +54,8 @@ def part1_q1_pipeline_parallelism(network_layers, input_count=32):
     layer_latency_list.pop()
     layer_traffic_list.pop()
 
-    print(f'{layer_latency_list=}')
-    print(f'{layer_traffic_list=}')
+    # print(f'{layer_latency_list=}')
+    # print(f'{layer_traffic_list=}')
 
     pipeline_period = max(layer_latency_list)
 
