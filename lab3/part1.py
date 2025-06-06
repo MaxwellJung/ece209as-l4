@@ -1,13 +1,11 @@
 from system_specs import *
 
 def main():
-    tp_1_latency, tp_1_traffic = part1_q1_tensor_parallelism(NETWORK_LAYERS_1)
-    pp_1_latency, pp_1_traffic = part1_q1_pipeline_parallelism(NETWORK_LAYERS_1)
+    tp_1_latency, tp_1_traffic = part1_q1_tensor_parallelism(NETWORK_LAYERS_1, input_count=1)
+    pp_1_latency, pp_1_traffic = part1_q1_pipeline_parallelism(NETWORK_LAYERS_1, input_count=1)
 
-    tp_32_latency = 0
-    tp_32_traffic = 0
-    pp_32_latency = 0
-    pp_32_traffic = 0
+    tp_32_latency, tp_32_traffic = part1_q1_tensor_parallelism(NETWORK_LAYERS_1, input_count=32)
+    pp_32_latency, pp_32_traffic = part1_q1_pipeline_parallelism(NETWORK_LAYERS_1, input_count=32)
 
     q3_tp_32_latency = 0
     q3_tp_32_traffic = 0
@@ -26,36 +24,43 @@ def main():
     print(f"Q3: PP total latency: {q3_pp_32_latency} ms")
 
 
-def part1_q1_tensor_parallelism(network_layers):
+def part1_q1_tensor_parallelism(network_layers, input_count=32):
     layer_latency_list = []
     layer_traffic_list = []
 
     for layer in network_layers:
         latency, traffic = calc_tp_layer(**layer, nodes=4)
 
-        layer_latency_list.append(latency)
+        layer_latency_list.extend(latency)
         layer_traffic_list.append(traffic)
 
-    total_latency_seconds = sum(layer_latency_list)
-    total_traffic_bits = sum(layer_traffic_list)
+    total_latency_seconds = input_count*sum(layer_latency_list)
+    total_traffic_bits = input_count*sum(layer_traffic_list)
     latency_ms = total_latency_seconds * 1e3
     traffic_kbits = total_traffic_bits / 1e3
 
     return latency_ms, traffic_kbits
 
 
-def part1_q1_pipeline_parallelism(network_layers):
+def part1_q1_pipeline_parallelism(network_layers, input_count=32):
     layer_latency_list = []
     layer_traffic_list = []
 
     for layer in network_layers:
         latency, traffic = calc_pp_layer(**layer, nodes=4)
 
-        layer_latency_list.append(latency)
+        layer_latency_list.extend(latency)
         layer_traffic_list.append(traffic)
+    layer_latency_list.pop()
+    layer_traffic_list.pop()
 
-    total_latency_seconds = sum(layer_latency_list)
-    total_traffic_bits = sum(layer_traffic_list)
+    print(f'{layer_latency_list=}')
+    print(f'{layer_traffic_list=}')
+
+    pipeline_period = max(layer_latency_list)
+
+    total_latency_seconds = pipeline_period*(input_count-1) + sum(layer_latency_list)
+    total_traffic_bits = input_count*sum(layer_traffic_list)
     latency_ms = total_latency_seconds * 1e3
     traffic_kbits = total_traffic_bits / 1e3
 
@@ -84,7 +89,7 @@ def calc_tp_layer(
 
     output_bits_per_node = output_count_per_node * BITS_PER_WEIGHT
     output_broadcast_latency_per_node = output_bits_per_node / BITS_PER_SEC
-    latency = compute_latency_per_node + output_broadcast_latency_per_node
+    latency = (compute_latency_per_node, output_broadcast_latency_per_node)
 
     if final_layer:
         # each node broadcasts its output to a single output node
@@ -125,7 +130,7 @@ def calc_pp_layer(
         output_broadcast_latency_per_node = 0
     else:
         output_broadcast_latency_per_node = output_bits_per_node / BITS_PER_SEC
-    latency = compute_latency_per_node + output_broadcast_latency_per_node
+    latency = (compute_latency_per_node, output_broadcast_latency_per_node)
 
     if final_layer:
         # output node doesn't need to broadcast
