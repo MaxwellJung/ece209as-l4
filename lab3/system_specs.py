@@ -22,9 +22,9 @@ NETWORK_LAYERS_2 = [
      'num_filter':128, 'num_channel':3, 'filter_width':3, 'filter_height':3},
     {'input_width':30, 'input_height':30,
      'num_filter':128, 'num_channel':128, 'filter_width':3, 'filter_height':3},
-    {'input_width':28, 'input_height':28,
+    {'input_width':14, 'input_height':14,
      'num_filter':128, 'num_channel':128, 'filter_width':3, 'filter_height':3},
-    {'input_width':26, 'input_height':26,
+    {'input_width':12, 'input_height':12,
      'num_filter':128, 'num_channel':128, 'filter_width':3, 'filter_height':3, 'final_layer': True},
 ]
 

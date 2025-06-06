@@ -7,9 +7,8 @@ def main():
     tp_32_latency, tp_32_traffic = part1_q1_tensor_parallelism(NETWORK_LAYERS_1, input_count=32)
     pp_32_latency, pp_32_traffic = part1_q1_pipeline_parallelism(NETWORK_LAYERS_1, input_count=32)
 
-    q3_tp_32_latency = 0
-    q3_tp_32_traffic = 0
-    q3_pp_32_latency = 0
+    q3_tp_32_latency, q3_tp_32_traffic = part1_q1_tensor_parallelism(NETWORK_LAYERS_2, input_count=32)
+    q3_pp_32_latency, q3_pp_32_traffic = part1_q1_pipeline_parallelism(NETWORK_LAYERS_2, input_count=32)
 
     print(f"Q1: TP total latency: {tp_1_latency} ms")
     print(f"Q1: TP total network traffic: {tp_1_traffic} KB")
@@ -22,6 +21,7 @@ def main():
     print(f"Q3: TP total latency: {q3_tp_32_latency} ms")
     print(f"Q3: TP total network traffic: {q3_tp_32_traffic} KB")
     print(f"Q3: PP total latency: {q3_pp_32_latency} ms")
+    print(f"Q3: PP total network traffic: {q3_pp_32_traffic} KB")
 
 
 def part1_q1_tensor_parallelism(network_layers, input_count=32):
