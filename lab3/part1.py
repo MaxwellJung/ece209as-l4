@@ -37,7 +37,7 @@ def part1_q1_tensor_parallelism(network_layers, input_count=32):
     total_latency_seconds = input_count*sum(layer_latency_list)
     total_traffic_bits = input_count*sum(layer_traffic_list)
     latency_ms = total_latency_seconds * 1e3
-    traffic_kbits = total_traffic_bits / 1e3
+    traffic_kbits = total_traffic_bits / (8 * 2**10)
 
     return latency_ms, traffic_kbits
 
@@ -62,7 +62,7 @@ def part1_q1_pipeline_parallelism(network_layers, input_count=32):
     total_latency_seconds = pipeline_period*(input_count-1) + sum(layer_latency_list)
     total_traffic_bits = input_count*sum(layer_traffic_list)
     latency_ms = total_latency_seconds * 1e3
-    traffic_kbits = total_traffic_bits / 1e3
+    traffic_kbits = total_traffic_bits / (8 * 2**10)
 
     return latency_ms, traffic_kbits
 

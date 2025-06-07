@@ -31,5 +31,5 @@ NETWORK_LAYERS_2 = [
 # System Specs
 BITS_PER_WEIGHT = 16
 OPS_PER_MAC = 2
-OPS_PER_SEC = 50e9 # 50 giga operations per second
-BITS_PER_SEC = 2e9 * 8 # 2 GB/s
+OPS_PER_SEC = 50 * 2**30 # 50 giga operations per second
+BITS_PER_SEC = 2 * 2**30 * 8 # 2 GB/s
